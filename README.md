@@ -40,16 +40,16 @@ Requisitos não funcionais
 
 ```mermaid
 flowchart TD
-    A[Comerciante] --> B((Cadastrar cliente))
-    A --> C((Editar cliente))
-    A --> D((Excluir cliente))
-    A --> E((Registrar compra))
-    A --> F((Consultar conta))
-    A --> G((Registrar pagamento))
-    A --> H((Calcular juros))
+    A[Usuário] --> B((Cadastrar conta))
+    A --> C((Fazer login))
+    A --> D((Consultar saldo))
+    A --> E((Registrar receita))
+    A --> F((Registrar despesa))
+    A --> G((Editar lançamento))
+    A --> H((Excluir lançamento))
     A --> I((Consultar histórico))
-    A --> J((Encerrar conta))
-    A --> K((Gerar relatório))
+    A --> J((Visualizar relatórios))
+    A --> K((Gerenciar categorias))
 ```
 ## Diagrama de Classes
 
@@ -62,69 +62,64 @@ classDiagram
         +String nome
         +String email
         +String senha
-        +entrar()
         +cadastrar()
-        +sair()
+        +fazerLogin()
+        +editarPerfil()
     }
 
-    class Cliente {
-        +int id
-        +String nome
-        +String telefone
-        +cadastrar()
-        +editar()
-        +excluir()
-    }
-
-    class Conta {
-        +int id
-        +double saldo
-        +String status
-        +calcularTotal()
-        +atualizarSaldo()
-        +encerrarConta()
-    }
-
-    class Compra {
+    class Movimentacao {
         +int id
         +double valor
         +String descricao
         +DateTime data
-        +registrarCompra()
-        +calcularJuros()
+        +editar()
+        +excluir()
     }
 
-    class Pagamento {
+    class Receita {
         +int id
         +double valor
-        +DateTime data
-        +registrarPagamento()
-        +abaterDivida()
+        +registrarReceita()
     }
 
-    class Juros {
+    class Despesa {
         +int id
-        +double taxa
-        +int prazo
-        +calcularJuros()
-        +atualizarTaxa()
+        +double valor
+        +registrarDespesa()
+    }
+
+    class Categoria {
+        +int id
+        +String nome
+        +String tipo
+        +cadastrarCategoria()
+        +editarCategoria()
     }
 
     class Relatorio {
         +int id
-        +String periodo
-        +double totalRecebido
-        +double totalPendente
+        +double totalReceitas
+        +double totalDespesas
+        +double saldo
         +gerarRelatorio()
-        +consultarRelatorio()
     }
 
-    Usuario "1" --> "0..*" Cliente : gerencia
-    Cliente "1" --> "1" Conta : possui
-    Conta "1" --> "0..*" Compra : registra
-    Conta "1" --> "0..*" Pagamento : recebe
-    Compra "0..*" --> "1" Juros : aplica
-    Usuario "1" --> "0..*" Relatorio : gera
+    class BancoDeDados {
+        +conectar()
+        +salvarDados()
+        +buscarDados()
+        +excluirDados()
+    }
+
+    Movimentacao <|-- Receita
+    Movimentacao <|-- Despesa
+    Usuario "1" --> "0..*" Movimentacao : registra
+    Categoria "1" --> "0..*" Movimentacao : classifica
+    Usuario "1" --> "0..*" Categoria : gerencia
+    Usuario "1" --> "0..*" Relatorio : consulta
+    BancoDeDados ..> Usuario : armazena
+    BancoDeDados ..> Movimentacao : armazena
+    BancoDeDados ..> Categoria : armazena
 ```
 
 7. Organização da equipe para desenvolvimento
